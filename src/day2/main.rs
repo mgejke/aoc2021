@@ -1,43 +1,48 @@
+use std::num::ParseIntError;
+use std::str::FromStr;
+
 use aoc2021lib::read_lines_to_strings;
-use aoc2021lib::words_by_line;
 
-fn p1(input: Vec<String>) -> String {
-    let mut h_pos = 0;
-    let mut depth = 0;
+enum Direction {
+    Forward(i32),
+    Up(i32),
+    Down(i32),
+}
 
-    let commands =
-        words_by_line(&input).map(|line| (line[0].clone(), line[1].parse::<i32>().unwrap()));
+impl FromStr for Direction {
+    type Err = ParseIntError;
 
-    for command in commands {
-        match command.0.as_ref() {
-            "forward" => h_pos += command.1,
-            "up" => depth -= command.1,
-            "down" => depth += command.1,
-            _ => println!("error"),
+    fn from_str(s: &str) -> Result<Direction, Self::Err> {
+        let (direction, value) = s.split_once(" ").unwrap();
+        match direction {
+            "forward" => Ok(Direction::Forward(value.parse()?)),
+            "up" => Ok(Direction::Up(value.parse()?)),
+            "down" => Ok(Direction::Down(value.parse()?)),
+            _ => panic!("OJ - {}", direction),
         }
     }
+}
+
+fn p1(input: Vec<String>) -> String {
+    let commands = input.iter().map(|f| f.parse::<Direction>().unwrap());
+
+    let (h_pos, depth) = commands.fold((0, 0), |(h_pos, depth), command| match command {
+        Direction::Forward(v) => (h_pos + v, depth),
+        Direction::Up(v) => (h_pos, depth - v),
+        Direction::Down(v) => (h_pos, depth + v),
+    });
     format!("{}", h_pos * &depth)
 }
 
 fn p2(input: Vec<String>) -> String {
-    let mut depth = 0;
-    let mut h_pos = 0;
-    let mut aim = 0;
+    let commands = input.iter().map(|f| f.parse::<Direction>().unwrap());
 
-    let commands =
-        words_by_line(&input).map(|line| (line[0].clone(), line[1].parse::<i32>().unwrap()));
-
-    for command in commands {
-        match command.0.as_ref() {
-            "forward" => {
-                h_pos += command.1;
-                depth += aim * command.1;
-            }
-            "up" => aim -= command.1,
-            "down" => aim += command.1,
-            _ => println!("error"),
-        }
-    }
+    let (h_pos, depth, _) =
+        commands.fold((0, 0, 0), |(h_pos, depth, aim), command| match command {
+            Direction::Forward(v) => (h_pos + v, depth + aim * v, aim),
+            Direction::Up(v) => (h_pos, depth, aim - v),
+            Direction::Down(v) => (h_pos, depth, aim + v),
+        });
     format!("{}", h_pos * &depth)
 }
 
