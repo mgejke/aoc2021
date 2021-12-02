@@ -31,7 +31,7 @@ fn p1(input: Vec<String>) -> String {
         Direction::Up(v) => (h_pos, depth - v),
         Direction::Down(v) => (h_pos, depth + v),
     });
-    format!("{}", h_pos * &depth)
+    format!("{}", h_pos * depth)
 }
 
 fn p2(input: Vec<String>) -> String {
@@ -43,7 +43,7 @@ fn p2(input: Vec<String>) -> String {
             Direction::Up(v) => (h_pos, depth, aim - v),
             Direction::Down(v) => (h_pos, depth, aim + v),
         });
-    format!("{}", h_pos * &depth)
+    format!("{}", h_pos * depth)
 }
 
 fn main() {
