@@ -1,7 +1,7 @@
+use itertools::Itertools;
 use std::vec;
 
 use aoc2021lib::read_lines_to_strings;
-use itertools::Itertools;
 
 fn to_vec_vec(v: Vec<String>) -> Vec<Vec<i32>> {
     v.iter()
@@ -34,10 +34,9 @@ fn bin_vec_to_dec(vec: &Vec<i32>) -> i32 {
 
 fn reduce_from_sum(vec: &Vec<i32>, f: &dyn Fn(&i32) -> i32) -> Vec<i32> {
     vec.iter().map(f).collect_vec()
-    // vec![0]
 }
 
-fn calculate_life_support_rating(vecvec: &Vec<Vec<i32>>, oxygen: bool) -> i32 {
+fn calculate_life_support_rating(vecvec: &Vec<Vec<i32>>, magic: i32) -> i32 {
     let mut vec = vecvec.clone();
 
     let mut i = 0;
@@ -45,12 +44,9 @@ fn calculate_life_support_rating(vecvec: &Vec<Vec<i32>>, oxygen: bool) -> i32 {
         let veclen = vec.len() as i32;
         let sums = get_sum(&vec);
 
-        let pattern: Vec<i32>;
-        if oxygen {
-            pattern = reduce_from_sum(&sums, &|s| (*s >= (veclen - s)) as i32);
-        } else {
-            pattern = reduce_from_sum(&sums, &|s| 1 - (*s >= (veclen - s)) as i32);
-        }
+        let pattern = reduce_from_sum(&sums, &|s| {
+            (magic - (*s >= (veclen - s)) as i32).abs() as i32
+        });
 
         vec = vec
             .into_iter()
@@ -73,8 +69,8 @@ fn p1(input: Vec<String>) -> String {
 
 fn p2(input: Vec<String>) -> String {
     let vecvec = to_vec_vec(input);
-    let oxygen = calculate_life_support_rating(&vecvec, true);
-    let c02 = calculate_life_support_rating(&vecvec, false);
+    let oxygen = calculate_life_support_rating(&vecvec, 0);
+    let c02 = calculate_life_support_rating(&vecvec, 1);
     format!("{}", oxygen * c02)
 }
 
