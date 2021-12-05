@@ -2,13 +2,8 @@ use std::fs;
 
 use itertools::Itertools;
 
-enum BoardValue {
-    Remainder(i32),
-    Collected,
-}
-
 struct Board {
-    rows: Vec<BoardValue>,
+    rows: Vec<Option<i32>>,
     bingo: bool,
 }
 
@@ -18,8 +13,8 @@ impl Board {
             .iter()
             .step_by(step)
             .map(|b_value| match b_value {
-                BoardValue::Remainder(value) => *value,
-                BoardValue::Collected => 0,
+                Some(value) => *value,
+                None => 0,
             })
             .sum()
     }
@@ -40,14 +35,14 @@ impl Board {
 
     fn check_number(&mut self, number: i32) {
         let f = self.rows.iter_mut().find(|b_value| {
-            if let BoardValue::Remainder(value) = b_value {
+            if let Some(value) = b_value {
                 *value == number
             } else {
                 false
             }
         });
         if let Some(a) = f {
-            *a = BoardValue::Collected;
+            *a = None;
         }
     }
 }
@@ -77,7 +72,7 @@ fn get_numbers_and_boards(input: String) -> (Vec<i32>, Vec<Board>) {
         let board: Board = Board {
             rows: table
                 .split_whitespace()
-                .map(|value| BoardValue::Remainder(value.parse::<i32>().unwrap()))
+                .map(|value| Some(value.parse::<i32>().unwrap()))
                 .collect(),
             bingo: false,
         };
