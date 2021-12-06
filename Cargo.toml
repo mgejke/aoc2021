@@ -26,9 +26,15 @@ name = "day4"
 path = "src/day4/main.rs"
 
 [[bin]]
+name = "day5"
+path = "src/day5/main.rs"
+
+[[bin]]
 name = "day6"
 path = "src/day6/main.rs"
 
 
 [dependencies]
 itertools = "0.10.1"
+grid = "0.6.0"
+rusttype = "0.5.2"
