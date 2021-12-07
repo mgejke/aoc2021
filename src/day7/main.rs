@@ -1,12 +1,11 @@
 use aoc2021lib::read_lines_to_strings;
 use itertools::Itertools;
 
-fn calc_cost(subs: Vec<i32>, f: &dyn Fn(&i32) -> i32) -> i32 {
+fn calc_cost(subs: Vec<i32>, f: &dyn Fn(i32) -> i32) -> i32 {
     let mut lowest = i32::MAX;
 
     for i in *subs.iter().min().unwrap()..*subs.iter().max().unwrap() {
-        let cost_vec = subs.iter().map(|v| (*v - i).abs()).collect_vec();
-        let cost: i32 = cost_vec.iter().map(f).sum();
+        let cost = subs.iter().map(|v| f((*v - i).abs())).sum();
         if cost < lowest {
             lowest = cost;
         }
@@ -20,7 +19,7 @@ fn p1(input: Vec<String>) -> String {
         .map(|v| v.parse().unwrap())
         .collect_vec();
 
-    format!("{:?}", calc_cost(subs, &|v: &i32| *v))
+    format!("{:?}", calc_cost(subs, &|v: i32| v))
 }
 
 fn p2(input: Vec<String>) -> String {
@@ -29,7 +28,7 @@ fn p2(input: Vec<String>) -> String {
         .map(|v| v.parse().unwrap())
         .collect_vec();
 
-    format!("{:?}", calc_cost(subs, &|v: &i32| *v * (1 + *v) / 2))
+    format!("{:?}", calc_cost(subs, &|v: i32| v * (1 + v) / 2))
 }
 
 fn main() {
