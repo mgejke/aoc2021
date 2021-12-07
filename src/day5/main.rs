@@ -15,15 +15,16 @@ fn p1(input: Vec<String>, diagonal: bool) -> String {
         .map(|pair| {
             let p1 = pair.0.split_once(",").unwrap();
             let p2 = pair.1.split_once(",").unwrap();
-            let p1 = Point {
-                x: p1.0.parse::<i32>().unwrap(),
-                y: p1.1.parse::<i32>().unwrap(),
-            };
-            let p2 = Point {
-                x: p2.0.parse::<i32>().unwrap(),
-                y: p2.1.parse::<i32>().unwrap(),
-            };
-            (p1, p2)
+            (
+                Point {
+                    x: p1.0.parse::<i32>().unwrap(),
+                    y: p1.1.parse::<i32>().unwrap(),
+                },
+                Point {
+                    x: p2.0.parse::<i32>().unwrap(),
+                    y: p2.1.parse::<i32>().unwrap(),
+                },
+            )
         })
         .collect_vec();
 
