@@ -52,11 +52,10 @@ fn p1(input: Vec<String>) -> String {
 fn p2(input: Vec<String>) -> String {
     let map = get_map(input);
     let lows = get_lows(&map);
-    let basins: Vec<P> = lows.iter().map(|(p, _)| **p).collect();
 
     let mut basin_sizes: Vec<usize> = Vec::new();
-    for basin in basins {
-        let mut to_explore: VecDeque<P> = VecDeque::from([basin]);
+    for (basin, _) in lows {
+        let mut to_explore: VecDeque<P> = VecDeque::from([*basin]);
         let mut explored: HashSet<P> = HashSet::new();
         while !to_explore.is_empty() {
             let p = to_explore.pop_front().unwrap();
@@ -77,7 +76,7 @@ fn p2(input: Vec<String>) -> String {
 
     basin_sizes.sort();
     basin_sizes.reverse();
-    format!("{:?}", basin_sizes[0..3].iter().fold(1, |r, v| r * v))
+    format!("{:?}", basin_sizes.iter().take(3).product::<usize>())
 }
 
 fn main() {
