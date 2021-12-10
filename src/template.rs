@@ -17,3 +17,25 @@ fn main() {
         println!("P2 - {}", p2(lines));
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::p1;
+    use crate::p2;
+    const TEST_DATA: &[&str] = &[
+        "DATADATADATADATA",
+        "DATADATADATADATA",
+        "DATADATADATADATA",
+        "DATADATADATADATA",
+    ];
+
+    #[test]
+    fn test_p1() {
+        assert_eq!(p1(TEST_DATA.iter().map(|s| s.to_string()).collect()), "-1");
+    }
+
+    #[test]
+    fn test_p2() {
+        assert_eq!(p2(TEST_DATA.iter().map(|s| s.to_string()).collect()), "-1");
+    }
+}
