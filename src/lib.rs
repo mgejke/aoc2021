@@ -4,9 +4,28 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 use rusttype::Point;
+use rusttype::Vector;
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
+type V = Vector<i32>;
+
+pub static NEIGHBOURS: [V; 8] = [
+    V { x: -1, y: -1 },
+    V { x: 1, y: -1 },
+    V { x: -1, y: 1 },
+    V { x: 1, y: 1 },
+    V { x: 0, y: -1 },
+    V { x: 1, y: 0 },
+    V { x: 0, y: 1 },
+    V { x: -1, y: 0 },
+];
+
+pub static DIRECTIONS: [V; 4] = [
+    V { x: 0, y: -1 },
+    V { x: 1, y: 0 },
+    V { x: 0, y: 1 },
+    V { x: -1, y: 0 },
+];
+
 pub fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where
     P: AsRef<Path>,

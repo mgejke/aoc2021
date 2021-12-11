@@ -1,58 +1,30 @@
-use std::{
-    cell::RefCell,
-    collections::HashMap,
-    io::{self, Write},
-};
+use std::{cell::RefCell, collections::HashMap};
 
-use aoc2021lib::{get_map, read_lines_to_strings};
-use rusttype::{Point, Vector};
-
-type V = Vector<i32>;
-
-static NEIGHBOURS: [V; 8] = [
-    V { x: -1, y: -1 },
-    V { x: 1, y: -1 },
-    V { x: -1, y: 1 },
-    V { x: 1, y: 1 },
-    V { x: 0, y: -1 },
-    V { x: 1, y: 0 },
-    V { x: 0, y: 1 },
-    V { x: -1, y: 0 },
-];
-
-#[derive(Debug, Clone, Copy)]
-struct Octopus {
-    value: i32,
-    flashed: bool,
-}
+use aoc2021lib::{get_map, read_lines_to_strings, NEIGHBOURS};
+use rusttype::Point;
 
 fn p1(input: Vec<String>, p2: bool, iteration: i32) -> String {
     let map = get_map(input);
 
-    let mut map = map
+    let map = map
         .into_iter()
-        .map(|(p, v)| {
-            (
-                p,
-                RefCell::new(Octopus {
-                    value: v,
-                    flashed: false,
-                }),
-            )
-        })
-        .collect::<HashMap<Point<i32>, RefCell<Octopus>>>();
+        .map(|(p, v)| (p, RefCell::new(v)))
+        .collect::<HashMap<Point<i32>, RefCell<i32>>>();
 
     let mut flash_count = 0;
     for i in 0..iteration {
         let mut flash_per_iteration = 0;
         for (_, v) in map.iter() {
-            v.borrow_mut().value += 1;
+            let mut o = v.borrow_mut();
+            if *o > 9 {
+                *o = 0;
+            }
+            *o += 1;
         }
 
-        let mut to_be_flashed: Vec<(Point<i32>, &RefCell<Octopus>)> = Vec::new();
+        let mut to_be_flashed: Vec<(Point<i32>, &RefCell<i32>)> = Vec::new();
         for (p, r_o) in map.iter() {
-            if r_o.borrow().value > 9 {
-                r_o.borrow_mut().flashed = true;
+            if *r_o.borrow() == 10 {
                 flash_per_iteration += 1;
                 to_be_flashed.push((*p, r_o));
             }
@@ -64,34 +36,19 @@ fn p1(input: Vec<String>, p2: bool, iteration: i32) -> String {
                 let np = p + *v;
                 if let Some(a) = map.get(&np) {
                     let mut b = a.borrow_mut();
-                    b.value += 1;
-                    if b.value > 9 && !b.flashed {
-                        b.flashed = true;
+                    *b += 1;
+                    if *b == 10 {
                         flash_per_iteration += 1;
                         to_be_flashed.push((np, a));
                     }
                 }
             }
         }
-        map = map
-            .iter()
-            .map(|(p, r_o)| {
-                if r_o.borrow().flashed {
-                    let mut o = r_o.borrow_mut();
-                    o.flashed = false;
-                    o.value = 0;
-                }
-                (*p, r_o.clone())
-            })
-            .collect();
         flash_count += flash_per_iteration;
-
         if p2 && flash_per_iteration == 100 {
             return format!("{:?}", i + 1);
         }
     }
-    let _ = io::stdout().flush();
-
     format!("{:?}", flash_count)
 }
 

@@ -1,18 +1,10 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use aoc2021lib::{get_map, read_lines_to_strings};
+use aoc2021lib::{get_map, read_lines_to_strings, DIRECTIONS};
 use itertools::Itertools;
-use rusttype::{Point, Vector};
+use rusttype::Point;
 
 type P = Point<i32>;
-type V = Vector<i32>;
-
-static DIRECTIONS: [V; 4] = [
-    V { x: 0, y: -1 },
-    V { x: 1, y: 0 },
-    V { x: 0, y: 1 },
-    V { x: -1, y: 0 },
-];
 
 fn get_lows(map: &HashMap<Point<i32>, i32>) -> Vec<(&Point<i32>, &i32)> {
     let lows = map
