@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use aoc2021lib::read_lines_to_strings;
+use aoc2021lib::{get_map, read_lines_to_strings};
 use itertools::Itertools;
 use rusttype::{Point, Vector};
 
@@ -13,22 +13,6 @@ static DIRECTIONS: [V; 4] = [
     V { x: 0, y: 1 },
     V { x: -1, y: 0 },
 ];
-
-fn get_map(input: Vec<String>) -> HashMap<Point<i32>, i32> {
-    let mut map: HashMap<P, i32> = HashMap::new();
-    for (y, line) in input.iter().enumerate() {
-        for (x, c) in line.chars().enumerate() {
-            map.insert(
-                P {
-                    x: x as i32,
-                    y: y as i32,
-                },
-                c.to_digit(10).unwrap() as i32,
-            );
-        }
-    }
-    map
-}
 
 fn get_lows(map: &HashMap<Point<i32>, i32>) -> Vec<(&Point<i32>, &i32)> {
     let lows = map
