@@ -45,39 +45,30 @@ fn p1(input: String, iterations: i32) -> String {
 fn p2(input: String, iterations: i32) -> String {
     let (template, rules) = input.split_once("\n\n").unwrap();
 
-    let bytes = template.as_bytes();
-
-    let first = bytes[0];
-    let last = bytes[bytes.len() - 1];
-
     let rules = rules
         .trim_end()
         .split("\n")
         .map(|s| {
             let (f, t) = s.split_once(" -> ").unwrap();
-            // let from: (&u8, &u8) = f.as_bytes().iter().collect_tuple().unwrap();
             let chars = f.as_bytes();
-            let t = t.as_bytes()[0];
-            ((chars[0], chars[1]), ((chars[0], t), (t, chars[1])))
+            ((chars[0], chars[1]), t.as_bytes()[0])
         })
-        .collect::<HashMap<(u8, u8), ((u8, u8), (u8, u8))>>();
+        .collect::<HashMap<(u8, u8), u8>>();
 
-    let mut counts: HashMap<(u8, u8), u64> = HashMap::new();
-    for (p1, p2) in template
-        .as_bytes()
-        .iter()
-        .zip(template[1..].as_bytes().iter())
-    {
-        *counts.entry((*p1, *p2)).or_insert(0) += 1;
-    }
+    let bytes = template.as_bytes();
+    let mut counts: HashMap<(u8, u8), u64> = bytes.windows(2).fold(HashMap::new(), |mut map, p| {
+        *map.entry((p[0], p[1])).or_insert(0) += 1;
+        map
+    });
 
     for _ in 0..iterations {
-        let mut new_counts: HashMap<(u8, u8), u64> = HashMap::new();
-        for (k, v) in &counts {
-            let (n1, n2) = rules.get(k).unwrap();
-            *new_counts.entry(*n1).or_insert(0) += v;
-            *new_counts.entry(*n2).or_insert(0) += v;
-        }
+        let new_counts: HashMap<(u8, u8), u64> =
+            counts.iter().fold(HashMap::new(), |mut map, (k, v)| {
+                let t = rules.get(&k).unwrap();
+                *map.entry((k.0, *t)).or_insert(0) += v;
+                *map.entry((*t, k.1)).or_insert(0) += v;
+                map
+            });
         counts = new_counts;
     }
 
@@ -91,8 +82,8 @@ fn p2(input: String, iterations: i32) -> String {
                 map
             });
 
-    *letter_counts.entry(first).or_insert(0) += 1;
-    *letter_counts.entry(last).or_insert(0) += 1;
+    *letter_counts.entry(*bytes.first().unwrap()).or_insert(0) += 1;
+    *letter_counts.entry(*bytes.last().unwrap()).or_insert(0) += 1;
 
     let (max, min) = letter_counts
         .iter()
@@ -145,8 +136,8 @@ mod tests {
     #[test]
     fn test_p2_3() {
         assert_eq!(
-            p2(fs::read_to_string("./data/input_day_14.txt").unwrap(), 10),
-            p1(fs::read_to_string("./data/input_day_14.txt").unwrap(), 10)
+            p1(fs::read_to_string("./data/input_day_14.txt").unwrap(), 10),
+            p2(fs::read_to_string("./data/input_day_14.txt").unwrap(), 10)
         );
     }
 }
