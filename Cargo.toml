@@ -65,6 +65,10 @@ path = "src/day13/main.rs"
 name = "day14"
 path = "src/day14/main.rs"
 
+[[bin]]
+name = "day15"
+path = "src/day15/main.rs"
+
 [dependencies]
 itertools = "0.10.1"
 rusttype = "0.5.2"
