@@ -1,6 +1,6 @@
 use aoc2021lib::read_lines_to_strings;
 
-fn p1(_input: Vec<String>) -> String {
+fn p1(input: Vec<String>) -> String {
     format!("{}", 0)
 }
 
